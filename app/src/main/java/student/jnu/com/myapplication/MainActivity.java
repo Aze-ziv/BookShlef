@@ -1,7 +1,9 @@
 package student.jnu.com.myapplication;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +30,7 @@ import android.widget.Toast;
 import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -38,6 +41,8 @@ public class MainActivity extends AppCompatActivity
     RecyclerView recyclerView_book;
 
     public BookAdapter bookAdapter;
+
+    private AlertDialog alertDialog;
 
     static Book bookNew;
 
@@ -170,6 +175,60 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.searchable.
         int id = item.getItemId();
 
+        //点击右上角按钮弹出单选框
+        if(id == R.id.sort){
+            final List<Book>sort_result = new ArrayList<Book>();
+            final String[] items = {"标题", "作者", "出版社", "出版时间"};
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+            alertBuilder.setTitle("排序依据");
+            final int[] count = {0};
+            alertBuilder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+//                    Toast.makeText(MainActivity.this, items[i], Toast.LENGTH_SHORT).show();
+                    if(items[i] == "标题"){
+                        sort_result.addAll(sort(bookList,1));
+                        count[0]++;
+                    }
+                    if (items[i] == "作者") {
+                        sort_result.addAll(sort(bookList,2));
+                        count[0]++;
+                    }
+                    if (items[i] == "出版社") {
+                        sort_result.addAll(sort(bookList,3));
+                        count[0]++;
+                    }
+                    if (items[i] == "出版时间") {
+                        sort_result.addAll(sort(bookList,4));
+                        count[0]++;
+                    }
+                }
+            });
+
+            alertBuilder.setPositiveButton("排序", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    if(count[0] == 0){
+                        sort_result.addAll(sort(bookList,1));
+                    }
+                    bookAdapter.setFilter(sort_result);
+
+                    alertDialog.dismiss();
+                }
+            });
+
+//            alertBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    alertDialog2.dismiss();
+//                }
+//            });
+
+            alertDialog = alertBuilder.create();
+            alertDialog.show();
+
+        }
+
         //noinspection SimplifiableIfStatement
 //        if (id == R.id.action_settings) {
 //            return true;
@@ -214,6 +273,35 @@ public class MainActivity extends AppCompatActivity
                 filter_bookList.add(book);
         }
         return filter_bookList;
+    }
+
+    //排序按钮
+
+    /**
+     * type：
+     * 1、标题
+     * 2、作者
+     * 3、出版社
+     * 4、出版时间
+     */
+    public List<Book>  sort(List<Book>bookList,int type){
+        List<Book> sort_bookList = new ArrayList<Book>();
+//        new AuthorNameComparable();
+        sort_bookList=bookList;
+        if(type==1) {
+            Collections.sort(sort_bookList, new BookNameComparable());
+        }
+        if(type==2){
+            Collections.sort(sort_bookList,new AuthorNameComparable());
+        }
+        if(type==3){
+            Collections.sort(sort_bookList,new PressNameComparable());
+        }
+        if(type==4){
+            Collections.sort(sort_bookList,new PressTimeComparable());
+        }
+
+        return sort_bookList;
     }
 
     //初始化书列表

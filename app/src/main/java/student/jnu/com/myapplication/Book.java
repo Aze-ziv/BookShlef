@@ -2,6 +2,7 @@ package student.jnu.com.myapplication;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 
@@ -82,6 +83,13 @@ public class Book implements Serializable{
         this.pressTime = pressTime;
     }
 
-
+    public int compareTo(@NonNull Book book) {
+//        char firstLetter = getBookName().toLowerCase().charAt(0);
+//        int fL = (int)firstLetter -(int)('0');
+//        char L2 = book.getBookName().toLowerCase().charAt(0);
+//        int f2 = (int)L2-(int)('0');
+//        return f2-L2;
+        return (int)(Long.parseLong(ISBN) - Long.parseLong(book.getISBN()));
+    }
 
 }
