@@ -126,7 +126,8 @@ public class MainActivity extends AppCompatActivity
                 if(resultCode == RESULT_OK){
                     Log.d(TAG, "enter case2");
                     Book book = (Book)data.getSerializableExtra("book");
-                    int position = data.getIntExtra("book_position", 0);
+                    int position = data.getIntExtra("book_num", 0);
+                    Log.d(TAG, "edit position: " + position);
                     bookList.remove(position);
                     bookList.add(position, book);
                     bookAdapter.notifyDataSetChanged();
