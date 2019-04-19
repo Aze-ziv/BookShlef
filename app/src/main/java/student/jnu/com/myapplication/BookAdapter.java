@@ -55,9 +55,9 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
                     Book book=mBookList.get(position);
                     Toast.makeText(v.getContext(),"111"+book.getBookName(),Toast.LENGTH_SHORT).show();
                     Intent intent=new Intent(v.getContext(),BookDetailActivity.class);
-                    intent.putExtra("book_item",book);
-                    mainActivity.startActivity(intent);
-
+                    intent.putExtra("book",book);
+                    intent.putExtra("book_num", position);
+                    mainActivity.startActivityForResult(intent, 2);
                 }
             });
         return holder;

@@ -27,8 +27,6 @@ public class BookEditActivity extends AppCompatActivity {
     String[] readingstate=new String[]{"已读","阅读中","未读"};
 
     private static final String TAG = "BookEditActivity";
-
-
     private boolean book_exists;
 
     ImageView book_pic_edit;
@@ -39,11 +37,6 @@ public class BookEditActivity extends AppCompatActivity {
     EditText isbn;
     Book book;
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy");
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +47,9 @@ public class BookEditActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Intent intent=getIntent();
-        book=(Book)intent.getSerializableExtra("book_item");
-        book_exists = intent.getBooleanExtra("book_exists", false);
-
-
+        book_exists = intent.getBooleanExtra("book_exists", true);
+        book = (Book)intent.getSerializableExtra("book");
+        Log.d(TAG, "book_exists: " + book_exists);
 
         //初始化控件
         book_pic_edit = (ImageView)findViewById(R.id.bookpic_edit);
@@ -81,7 +73,6 @@ public class BookEditActivity extends AppCompatActivity {
         press_time.setText(book.getPressTime());
         isbn.setText(book.getISBN());
 
-
         //加载阅读状态下拉框
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,readingstate);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -99,17 +90,12 @@ public class BookEditActivity extends AppCompatActivity {
             }
         }
 
-
-
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.edit_menu,menu);
-
         return true;
-
     }
 
 //-------------------------------------------
@@ -126,36 +112,23 @@ public class BookEditActivity extends AppCompatActivity {
 //                              book.getAuthor() == null &&
 //                              book.getPressName() == null &&
 //                              book.getPressTime() ==null) ? false : true;
-                Log.d(TAG, "onOptionsItemSelected: book_exists is " + book_exists);
                 book.setBookName(book_name.getText().toString());
                 book.setISBN(isbn.getText().toString());
                 book.setAuthor(author.getText().toString());
                 book.setPressName(press.getText().toString());
                 book.setPressTime(press_time.getText().toString());
 
-                Log.d(TAG, "onOptionsItemSelected: book_img: " + book.getImageId());
-                Log.d(TAG, "onOptionsItemSelected: book_name: " + book_name.getText().toString());
-                Log.d(TAG, "onOptionsItemSelected: isbn: " + isbn.getText().toString());
-                Log.d(TAG, "onOptionsItemSelected: author: " + author.getText().toString());
-                Log.d(TAG, "onOptionsItemSelected: press: " + press.getText().toString());
-                Log.d(TAG, "onOptionsItemSelected: press_time: " + press_time.getText().toString());
-                Log.d(TAG, "onOptionsItemSelected: book:" + book);
                 //若book里面的各属性为空，则判断是空书，应该返回去add（注意这里的判别有问题，edit后属性不为空，要修改）
-                if(!book_exists){
-                    Log.d(TAG, "onOptionsItemSelected: 返回数据");
+                if(book_exists){
+                    Intent intent1 = new Intent();
+                    intent1.putExtra("book", book);
+                    BookEditActivity.this.setResult(RESULT_OK, intent1);
+                }else{
                     Intent intent = new Intent();
-                    intent.putExtra("book_exists", false);
-                    intent.putExtra("book_new", book);
-                    //还要传回被修改的项的position
+                    intent.putExtra("book", book);
                     BookEditActivity.this.setResult(RESULT_OK, intent);
-                    Log.d(TAG, "onOptionsItemSelected: set ok");
                 }
-                //保存到数组
-                Log.d(TAG, "onOptionsItemSelected: finish prev");
-                finish();
-                 //结束edit这个activity，否则从MainActivity按返回键是退回edit
-                Log.d(TAG, "onOptionsItemSelected: book_afterfinish:" + book);
-                Log.d(TAG, "onOptionsItemSelected: finish after");
+                finish();       //结束edit这个activity，否则从MainActivity按返回键是退回edit
                 break;
         }
 

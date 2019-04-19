@@ -15,8 +15,8 @@ import android.widget.Toast;
 
 public class BookDetailActivity extends AppCompatActivity {
 
-
-
+    int position;
+    Book book;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +26,8 @@ public class BookDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar_detail);
         //获取书本对象
         Intent intent=getIntent();
-        final Book book=(Book)intent.getSerializableExtra("book_item");
+        book=(Book)intent.getSerializableExtra("book");
+        position = intent.getIntExtra("book_num", 0);
 
         //初始化控件
         ImageButton edit_button=(ImageButton)findViewById(R.id.btn_edit);
@@ -59,13 +60,25 @@ public class BookDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(BookDetailActivity.this,BookEditActivity.class);
-                intent.putExtra("book_item",book);
-                startActivity(intent);
-                finish();
+                intent.putExtra("book", book);
+                startActivityForResult(intent, 2);
             }
         });
 
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 2:
+                book = (Book)data.getSerializableExtra("book");
+                Intent intent = new Intent();
+                intent.putExtra("book", book);
+                intent.putExtra("book_num", position);
+                BookDetailActivity.this.setResult(RESULT_OK, intent);
+                finish();
+        }
     }
 
     @Override

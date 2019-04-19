@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 Intent intent_upload = new Intent(MainActivity.this, BookEditActivity.class);
                 bookNew = new Book(R.drawable.img_nulledit, "bookName", "ISBN", "author", "pressName", "pressTime");
-                intent_upload.putExtra("book_item", bookNew);
+                intent_upload.putExtra("book", bookNew);
                 intent_upload.putExtra("book_exists", false);
                 startActivityForResult(intent_upload, 1);
             }
@@ -113,28 +113,25 @@ public class MainActivity extends AppCompatActivity
     //检测从edit活动返回的book是否已经存在，不存在则添加到booklist
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult: enter onactivityresult");
-        Log.d(TAG, "bookNew: " + bookNew);
-        boolean book_exists = data.getBooleanExtra("book_exists",false);
         switch (requestCode){
             case 1:
                 if(resultCode == RESULT_OK){
-                    Log.d(TAG, "onActivityResult: book_exists: " + !book_exists);
-                    if(!book_exists) {
-                        Log.d(TAG, "data: " + data);
-                        Book book = (Book)data.getSerializableExtra("book_new");
-                        Log.d(TAG, "book: " + book);
-                        Log.d(TAG, "book_name: " + book.getBookName());
-                        Log.d(TAG, "onActivityResult: booklist addprev size: " + bookList.size());
-                        bookList.add(book);
-                        Log.d(TAG, "onActivityResult: booklist addafter size: " + bookList.size());
-                        Log.d(TAG, "onActivityResult: booklist add success");
-                        bookAdapter.notifyDataSetChanged();
-                        Log.d(TAG, "onActivityResult: bookAdapter notify success");
-                    }else{
-                        bookAdapter.notifyDataSetChanged();
-                    }
+                    Log.d(TAG, "enter case1");
+                    Book book = (Book)data.getSerializableExtra("book");
+                    bookList.add(book);
+                    bookAdapter.notifyDataSetChanged();
                 }
+                break;
+            case 2:
+                if(resultCode == RESULT_OK){
+                    Log.d(TAG, "enter case2");
+                    Book book = (Book)data.getSerializableExtra("book");
+                    int position = data.getIntExtra("book_position", 0);
+                    bookList.remove(position);
+                    bookList.add(position, book);
+                    bookAdapter.notifyDataSetChanged();
+                }
+                break;
         }
     }
 
