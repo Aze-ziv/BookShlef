@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //加载主list
+        Log.d(TAG, "git change test");
         Log.d(TAG, "onCreate: create mainactivity");
         initBooks();
         recyclerView_book=(RecyclerView)findViewById(R.id.recycler_view);
